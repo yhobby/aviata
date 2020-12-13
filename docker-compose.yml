@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+  app:
+    restart: always
+    image: app
+    container_name: app
+    build: .
+    command: python -m src.app
+    volumes:
+      - .:/proj
+    ports:
+      - '8000:8000'
+#    links:
+#      - redis
+#    depends_on:
+#      - redis
+  redis:
+#    restart: always
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+    command: redis-server --appendonly yes
+    volumes:
+      - ./data:/data
+  worker:
+#    restart: always
+    image: app:latest
+    container_name: worker
+    volumes:
+      - .:/proj
+    command: celery -A src.worker worker -B -l info
+    depends_on:
+      - app
+      - redis
+#volumes:
+#  data:
