@@ -39,7 +39,7 @@ def get_cheapest_cost(direction: tuple) -> tuple:
 
             date_in_utc = sorted_data[0]['dTimeUTC']
             date = datetime.datetime.fromtimestamp(date_in_utc).strftime('%c')
-            print('price', sorted_data[0]['price'])
+
             return sorted_data[0]['price'], sorted_data[0]['booking_token'], date  # price, token, date flight
         else:
             print('API Error')
