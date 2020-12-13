@@ -421,4 +421,5 @@ venv
 ### OWN ###
 data
 celerybeat-schedule
+requirements-dev.txt
 # End of https://www.gitignore.io/api/node,venv,linux,macos,django,jetbrains,sublimetext,visualstudiocode
