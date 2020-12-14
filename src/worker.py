@@ -8,7 +8,6 @@ from src.api import search_flights, check_flights
 from src.settings import IATA_CODES
 
 db = redis.Redis(host='redis')
-# db = redis.Redis()
 app = Celery(broker='redis://redis:6379/1')
 
 app.conf.timezone = 'Asia/Almaty'
@@ -17,11 +16,11 @@ app.conf.timezone = 'Asia/Almaty'
 app.conf.beat_schedule = {
     'midnight_updates': {
         'task': 'src.worker.midnight_updates',
-        'schedule': crontab() # Execute every minutes
+        'schedule': crontab(minute='*/5') # Execute every 5 minutes
     },
     'price_confirmations': {
         'task': 'src.worker.price_confirmations',
-        'schedule': crontab(minute='*/5') # Execute every 5 minutes
+        'schedule': crontab() # Execute every minutes
     },
 }
 

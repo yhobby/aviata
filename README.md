@@ -2,7 +2,7 @@
 ## To run the application follow these steps
 1. Clone repo to your local laptop or PC
 2. Run the command in root folder of repo `sudo docker-compose up --build`
-3. Wait until will be ready all services
+3. Wait until will be ready all services and midnight update will run (execute every 5 minutes) to fill the database 
 4. Go to web server http://0.0.0.0:8000/
 
 ## Notes
