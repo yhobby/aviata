@@ -11,12 +11,10 @@ db = redis.Redis(host='redis')
 app = Celery(broker='redis://redis:6379/1')
 
 app.conf.timezone = 'Asia/Almaty'
-# The function run time is set not correct only for verification the task
-# Correct time crontab(minute=0, hour=0)
 app.conf.beat_schedule = {
     'midnight_updates': {
         'task': 'src.worker.midnight_updates',
-        'schedule': crontab(minute='*/5') # Execute every 5 minutes
+        'schedule': crontab(minute=0, hour=0) # Execute daily at midnight.
     },
     'price_confirmations': {
         'task': 'src.worker.price_confirmations',
@@ -41,10 +39,17 @@ def midnight_updates():
 def price_confirmations():
     routes = generate_unique_routes()
     for route in routes:
-        token = db.hget(route, 'booking_token').decode('utf-8')
-        status = check_flights(token)
-        print('price_confirmations', f'{route=}')
-        db.hset(route, 'status', status)
+        try:
+            token = db.hget(route, 'booking_token').decode('utf-8')
+            status = check_flights(token)
+            print('price_confirmations', f'{route=}')
+            db.hset(route, 'status', status)
+        except AttributeError:
+            print('This direction is absent in the database, please wait we will fill the DB')
+            data = search_flights(route)
+            print('midnight_updates', f'{route=}')
+            for key, value in data.items():
+                db.hset(key, None, None, value)
 
 
 def generate_unique_routes(codes=IATA_CODES) -> list:
